@@ -1,5 +1,7 @@
-package com.usmobile;
+package com.usmobile.controllers;
 
+import com.usmobile.models.User;
+import com.usmobile.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

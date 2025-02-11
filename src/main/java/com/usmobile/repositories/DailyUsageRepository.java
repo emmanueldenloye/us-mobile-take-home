@@ -1,5 +1,6 @@
-package com.usmobile;
+package com.usmobile.repositories;
 
+import com.usmobile.models.DailyUsage;
 import java.util.Date;
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;

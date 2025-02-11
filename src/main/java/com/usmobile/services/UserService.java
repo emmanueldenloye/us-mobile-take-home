@@ -1,5 +1,7 @@
-package com.usmobile;
+package com.usmobile.services;
 
+import com.usmobile.models.User;
+import com.usmobile.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

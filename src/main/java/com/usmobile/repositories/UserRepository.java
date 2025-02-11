@@ -1,5 +1,6 @@
-package com.usmobile;
+package com.usmobile.repositories;
 
+import com.usmobile.models.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserRepository extends MongoRepository<User, String>

@@ -1,5 +1,9 @@
-package com.usmobile;
+package com.usmobile.services;
 
+import com.usmobile.models.Cycle;
+import com.usmobile.models.DailyUsage;
+import com.usmobile.repositories.CycleRepository;
+import com.usmobile.repositories.DailyUsageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Date;

@@ -1,5 +1,8 @@
-package com.usmobile;
+package com.usmobile.controllers;
 
+import com.usmobile.models.Cycle;
+import com.usmobile.models.DailyUsage;
+import com.usmobile.services.UsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
