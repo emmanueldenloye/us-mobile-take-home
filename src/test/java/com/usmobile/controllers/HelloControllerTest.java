@@ -1,4 +1,4 @@
-package com.usmobile; // Ensure this matches the package name
+package com.usmobile.controllers; // Ensure this matches the package name
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
