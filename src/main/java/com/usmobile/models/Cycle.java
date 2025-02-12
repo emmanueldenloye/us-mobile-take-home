@@ -15,4 +15,6 @@ public class Cycle
     private Date startDate;
     private Date endDate;
     private String userId;
+
+    public Cycle(){}
 }

@@ -14,4 +14,6 @@ public class DailyUsage {
     private String userId;
     private Date usageDate;
     private Double usedInMb;
+
+    public DailyUsage() {}
 }

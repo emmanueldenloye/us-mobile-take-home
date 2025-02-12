@@ -24,4 +24,9 @@ public class UsageController {
     public List<Cycle> getCycleHistory(@RequestParam String userId, @RequestParam String mdn) {
         return usageService.getCycleHistory(userId, mdn);
     }
+
+    @PostMapping("/transfer")
+    public void transferMdn(@RequestParam String mdn, @RequestParam String fromUserId, @RequestParam String toUserId) {
+        usageService.transferMdn(mdn, fromUserId, toUserId);
+    }
 }
