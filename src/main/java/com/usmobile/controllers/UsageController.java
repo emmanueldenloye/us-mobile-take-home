@@ -27,6 +27,10 @@ public class UsageController {
 
     @GetMapping("/current")
     public List<DailyUsage> getCurrentCycleUsage(@RequestParam String userId, @RequestParam String mdn) {
+        System.out.println("Found cycles: " + cycleService.findCycles(
+            c -> CycleCriteria.filterByUserId(userId),
+            c -> CycleCriteria.filterByMdn(mdn))
+        );
         Cycle currentCycle = cycleService.findCycles(
             c -> CycleCriteria.filterByUserId(userId),
             c -> CycleCriteria.filterByMdn(mdn))
