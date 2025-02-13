@@ -1,9 +1,10 @@
 package com.usmobile.services;
 
-import com.usmobile.repositories.DailyUsageRepository;
 import com.usmobile.models.DailyUsage;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,12 +12,16 @@ import java.util.Date;
 
 @Service
 public class UsageUpdateScheduler {
-    private final DailyUsageRepository dailyUsageRepository;
+
+    private final MongoTemplate mongoTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(UsageUpdateScheduler.class);
+    private final DailyUsageService dailyUsageService;
 
-    public UsageUpdateScheduler(DailyUsageRepository dailyUsageRepository) {
-        this.dailyUsageRepository = dailyUsageRepository;
+    @Autowired
+    public UsageUpdateScheduler(MongoTemplate mongoTemplate, DailyUsageService dailyUsageService) {
+        this.mongoTemplate = mongoTemplate;
+        this.dailyUsageService = dailyUsageService;
     }
 
     @Scheduled(fixedRate = 15 * 60 * 1000)
@@ -26,7 +31,7 @@ public class UsageUpdateScheduler {
         logger.info("Updating usage data");
         var now = new Date();
 
-        dailyUsageRepository.findAll().forEach(usage -> {
+        dailyUsageService.findDailyUsage().forEach(usage -> {
             if (usage.getUsageDate().equals(now)) {
                 double newUsage = calculateNewUsage(usage.getUsedInMb());
                 var updatedUsage = new DailyUsage();
@@ -36,12 +41,12 @@ public class UsageUpdateScheduler {
                 updatedUsage.setUsageDate(usage.getUsageDate());
                 updatedUsage.setUsedInMb(newUsage);
 
-                dailyUsageRepository.save(usage);
+                mongoTemplate.save(usage);
             }
         });
     }
 
     private double calculateNewUsage(double currentUsage) {
-        return currentUsage + 100.0;
+        return currentUsage + 100.0; //arbirtary value
     }
 }
