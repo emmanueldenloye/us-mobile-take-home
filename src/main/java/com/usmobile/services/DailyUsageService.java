@@ -15,8 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Service
 public class DailyUsageService {
@@ -39,11 +40,9 @@ public class DailyUsageService {
         return new Criteria().andOperator(criteria);
     }
 
-    public List<DailyUsage> findDailyUsage(Function<Criteria, Criteria>... filters) {
+    public List<DailyUsage> findDailyUsage(List<Criteria> filters) {
         Criteria combinedCriteria = and(
-            Arrays.stream(filters)
-                  .map(filter -> filter.apply(new Criteria()))
-                  .toArray(Criteria[]::new)
+            filters.toArray(new Criteria[0])
         );
         return executeQuery(combinedCriteria);
     }
@@ -105,7 +104,8 @@ public class DailyUsageService {
         updatedUsage.setUserId(usage.getUserId());
         updatedUsage.setUsageDate(usage.getUsageDate());
         updatedUsage.setUsedInMb(usedInMb);
+        mongoTemplate.save(updatedUsage);
 
-        return mongoTemplate.save(updatedUsage);
+        return updatedUsage;
     }
 }

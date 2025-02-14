@@ -6,7 +6,7 @@ import java.util.Date;
 public class CycleCriteria {
 
     public static Criteria filterById(String id) {
-        return Criteria.where("id").is(id);
+        return Criteria.where("_id").is(id);
     }
 
     public static Criteria filterByMdn(String mdn) {

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-import static com.usmobile.repositories.UserCriteria.*;
+import com.usmobile.repositories.UserCriteria;
 
 @RestController
 @RequestMapping("/users")
@@ -23,18 +23,19 @@ public class UserController {
 
     @GetMapping("/by-email")
     public List<User> getUserByEmail(@RequestParam String email) {
-        return userService.findUsers(
-            c -> filterByEmail(email)
-        );
+        return userService.findUsers(List.of(
+            UserCriteria.filterByEmail(email)
+        ));
     }
 
     @GetMapping("/by-name")
     public List<User> getUsersByName(
         @RequestParam String firstName,
         @RequestParam String lastName) {
-        return userService.findUsers(
-            c -> filterByFirstName(firstName),
-            c -> filterByLastName(lastName)
+        return userService.findUsers(List.of(
+            UserCriteria.filterByFirstName(firstName),
+            UserCriteria.filterByLastName(lastName)
+        )
         );
     }
 

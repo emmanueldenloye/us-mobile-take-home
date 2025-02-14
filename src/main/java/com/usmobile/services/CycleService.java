@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.Date;
 import java.util.Arrays;
 
@@ -34,11 +34,9 @@ public class CycleService {
         return new Criteria().andOperator(criteria);
     }
 
-    public List<Cycle> findCycles(Function<Criteria, Criteria>... filters) {
+    public List<Cycle> findCycles(List<Criteria> filters) {
         Criteria combinedCriteria = and(
-            Arrays.stream(filters)
-                  .map(filter -> filter.apply(new Criteria()))
-                  .toArray(Criteria[]::new)
+            filters.toArray(new Criteria[0])
         );
         return executeQuery(combinedCriteria);
     }

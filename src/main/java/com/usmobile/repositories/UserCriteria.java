@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 public class UserCriteria {
 
     public static Criteria filterById(String id) {
-        return Criteria.where("id").is(id);
+        return Criteria.where("_id").is(id);
     }
 
     public static Criteria filterByFirstName(String firstName) {

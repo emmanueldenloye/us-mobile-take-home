@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 
 import static com.usmobile.repositories.CycleCriteria.*;
 
@@ -25,8 +26,9 @@ public class CycleController {
 
     @GetMapping("/by-user")
     public List<Cycle> getCyclesByUser(@RequestParam String userId) {
-        return cycleService.findCycles(
-            c -> filterByUserId(userId)
+        return cycleService.findCycles(Arrays.asList(
+            CycleCriteria.filterByUserId(userId)
+            )
         );
     }
 
@@ -34,9 +36,9 @@ public class CycleController {
     public List<Cycle> getCyclesByDateRange(
         @RequestParam Date startDate,
         @RequestParam Date endDate) {
-            return cycleService.findCycles(
-                c -> filterByDateRange(startDate, endDate)
-            );
+            return cycleService.findCycles(Arrays.asList(
+                CycleCriteria.filterByDateRange(startDate, endDate)
+            ));
     }
 
     @GetMapping("/{id}")

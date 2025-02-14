@@ -17,7 +17,8 @@ import java.util.Arrays;
 @Service
 public class UserService {
 
-    private final MongoTemplate mongoTemplate;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Autowired
     public UserService(MongoTemplate mongoTemplate) {
@@ -34,11 +35,9 @@ public class UserService {
         return new Criteria().andOperator(criteria);
     }
 
-    public List<User> findUsers(Function<Criteria, Criteria>... filters) {
+    public List<User> findUsers(List<Criteria> filters) {
         Criteria combinedCriteria = and(
-            Arrays.stream(filters)
-                  .map(filter -> filter.apply(new Criteria()))
-                  .toArray(Criteria[]::new)
+            filters.toArray(new Criteria[0])
         );
         return executeQuery(combinedCriteria);
     }
@@ -46,7 +45,8 @@ public class UserService {
     public Optional<User> findUserById(String id) {
         Criteria criteria = UserCriteria.filterById(id);
         Query query = new Query(criteria);
-        return Optional.ofNullable(mongoTemplate.findOne(query, User.class));
+        User user = mongoTemplate.findOne(query, User.class);
+        return Optional.ofNullable(user);
     }
 
     @Autowired

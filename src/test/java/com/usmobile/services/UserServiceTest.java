@@ -19,48 +19,112 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import org.mockito.Mock;
 import org.springframework.test.context.ActiveProfiles;
+import com.usmobile.repositories.UserRepository;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@DataMongoTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
-    @Autowired
+    @Mock
     private MongoTemplate mongoTemplate;
 
-    @Autowired
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
     private UserService userService;
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    public void testFindUsersByEmail() {
-        // Arrange
-        String email = "john.doe@example.com";
+    public void testFindUsersByCriteria() {
+        User john = new User();
+        john.setFirstName("John");
+        john.setLastName("Doe");
+        john.setEmail("john.doe@example.com");
+        john.setPassword("password123");
+
+        User alice = new User();
+        alice.setFirstName("Alice");
+        alice.setLastName("Smith");
+        alice.setEmail("alice.smith@example.com");
+        alice.setPassword("password123");
+
+        Criteria criteria = new Criteria().orOperator(
+            Criteria.where("firstName").is("John"),
+            Criteria.where("firstName").is("Alice")
+        );
+
+        when(mongoTemplate.find(any(Query.class), eq(User.class)))
+            .thenReturn(List.of(john, alice));
+
+        List<User> result = userService.findUsers(List.of(criteria));
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("John", result.get(0).getFirstName());
+        assertEquals("Alice", result.get(1).getFirstName());
+    }
+
+    @Test
+    public void testCreateUser() {
         User user = new User();
         user.setFirstName("John");
         user.setLastName("Doe");
-        user.setEmail(email);
+        user.setEmail("john.doe@example.com");
         user.setPassword("password123");
 
-        Criteria criteria = UserCriteria.filterByEmail(email);
-        when(mongoTemplate.find(new Query(criteria), User.class))
-                .thenReturn(Collections.singletonList(user));
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        // Act
-        List<User> result = userService.findUsers(c -> UserCriteria.filterByEmail(email));
+        User createdUser = userService.createUser(user);
 
-        // Assert
-        assertEquals(1, result.size());
-        assertEquals("John", result.get(0).getFirstName());
+        assertNotNull(createdUser);
+        assertEquals("John", createdUser.getFirstName());
+        assertEquals("Doe", createdUser.getLastName());
+        assertEquals("john.doe@example.com", createdUser.getEmail());
+    }
+
+    @Test
+    public void testUpdateUser() {
+        String userId = "1";
+        User existingUser = new User();
+        existingUser.setFirstName("John");
+        existingUser.setLastName("Doe");
+        existingUser.setEmail("john.doe@example.com");
+        existingUser.setPassword("password123");
+
+        User updatedUser = new User();
+        updatedUser.setFirstName("Johnny");
+        updatedUser.setLastName("Doe");
+        updatedUser.setEmail("johnny.doe@example.com");
+        updatedUser.setPassword("newpassword123");
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+
+        User result = userService.updateUser(userId, updatedUser);
+
+        assertNotNull(result);
+        assertEquals("Johnny", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals("johnny.doe@example.com", result.getEmail());
     }
 
     @Test
     public void testFindUserById() {
-        // Arrange
         String id = "1";
         User user = new User();
         user.setFirstName("John");
@@ -69,13 +133,12 @@ public class UserServiceTest {
         user.setPassword("password123");
 
         Criteria criteria = UserCriteria.filterById(id);
-        when(mongoTemplate.findOne(new Query(criteria), User.class))
-                .thenReturn(user);
+        when(mongoTemplate.findOne(new Query(criteria), User.class)).thenReturn(user);
 
-        // Act
         Optional<User> result = userService.findUserById(id);
 
-        // Assert
+        assertNotNull(result);
         assertEquals("John", result.get().getFirstName());
     }
 }
+

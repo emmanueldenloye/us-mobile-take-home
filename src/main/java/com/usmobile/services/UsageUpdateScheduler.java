@@ -5,10 +5,16 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
 @Service
 public class UsageUpdateScheduler {
@@ -31,7 +37,9 @@ public class UsageUpdateScheduler {
         logger.info("Updating usage data");
         var now = new Date();
 
-        dailyUsageService.findDailyUsage().forEach(usage -> {
+        List<Criteria> filters = List.of();
+
+        dailyUsageService.findDailyUsage(filters).forEach(usage -> {
             if (usage.getUsageDate().equals(now)) {
                 double newUsage = calculateNewUsage(usage.getUsedInMb());
                 var updatedUsage = new DailyUsage();

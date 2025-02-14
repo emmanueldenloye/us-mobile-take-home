@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Date;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/usage")
@@ -27,21 +28,22 @@ public class UsageController {
 
     @GetMapping("/current")
     public List<DailyUsage> getCurrentCycleUsage(@RequestParam String userId, @RequestParam String mdn) {
-        System.out.println("Found cycles: " + cycleService.findCycles(
-            c -> CycleCriteria.filterByUserId(userId),
-            c -> CycleCriteria.filterByMdn(mdn))
+        System.out.println("Found cycles: " + cycleService.findCycles(Arrays.asList(
+            CycleCriteria.filterByUserId(userId),
+            CycleCriteria.filterByMdn(mdn))
+        )
         );
-        Cycle currentCycle = cycleService.findCycles(
-            c -> CycleCriteria.filterByUserId(userId),
-            c -> CycleCriteria.filterByMdn(mdn))
+        Cycle currentCycle = cycleService.findCycles(Arrays.asList(
+            CycleCriteria.filterByUserId(userId),
+            CycleCriteria.filterByMdn(mdn)))
             .stream()
             .filter(cycle -> cycle.getEndDate().after(new Date()))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("No active cycle found"));
-        return dailyUsageService.findDailyUsage(
-            c -> DailyUsageCriteria.filterByUserId(userId),
-            c -> DailyUsageCriteria.filterByMdn(mdn),
-            c -> DailyUsageCriteria.filterByUsageDateBetween(currentCycle.getStartDate(), currentCycle.getEndDate())
+        return dailyUsageService.findDailyUsage(Arrays.asList(
+            DailyUsageCriteria.filterByUserId(userId),
+            DailyUsageCriteria.filterByMdn(mdn),
+            DailyUsageCriteria.filterByUsageDateBetween(currentCycle.getStartDate(), currentCycle.getEndDate()))
         );
     }
     
@@ -49,18 +51,20 @@ public class UsageController {
     public List<DailyUsage> getDailyUsage(
         @RequestParam String mdn,
         @RequestParam Date usageDate) {
-        return dailyUsageService.findDailyUsage(
-            c -> DailyUsageCriteria.filterByMdn(mdn),
-            c -> DailyUsageCriteria.filterByUsageDate(usageDate)
+        return dailyUsageService.findDailyUsage(Arrays.asList(
+            DailyUsageCriteria.filterByMdn(mdn),
+            DailyUsageCriteria.filterByUsageDate(usageDate)
+        )
         );
     }
         
 
     @GetMapping("/history")
     public List<Cycle> getCycleHistory(@RequestParam String userId, @RequestParam String mdn) {
-        return cycleService.findCycles(
-            c -> CycleCriteria.filterByUserId(userId),
-            c -> CycleCriteria.filterByMdn(mdn)
+        return cycleService.findCycles(List.of(
+            CycleCriteria.filterByUserId(userId),
+            CycleCriteria.filterByMdn(mdn)
+        )
         );
     }
 
