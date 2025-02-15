@@ -31,6 +31,24 @@ This is a Spring Boot application for managing user data, billing cycles, and da
    ```
 The mongo database should be seeded with some fake data.
 
+### Service Design
+
+#### Service Boundaries
+The application is divided into distinct services, each responsible for a specific domain:
+- **User Service**: Manages user data and authentication.
+- **Billing Service**: Handles billing cycles and payment processing.
+- **Usage Service**: Tracks daily usage data.
+
+#### Communication
+Services communicate with each other using RESTful APIs. This approach ensures loose coupling and allows for easy integration with other services or third-party applications.
+
+#### Data Management
+Each service has its own database to ensure data encapsulation and independence. MongoDB is used for its flexibility and scalability, which aligns well with the microservices architecture.
+
+#### Deployment
+Docker Compose is used to manage the deployment of the services. This simplifies the setup process and ensures consistency across different environments.
+
+These design choices aim to create a robust, scalable, and maintainable application that can grow and adapt to future requirements.
 ### Design Decisions and Trade-Offs
 
 #### Strongly-Typed Code
