@@ -14,12 +14,17 @@ public class DailyUsageCriteria {
         return Criteria.where("mdn").is(mdn);
     }
     
-    public static Criteria filterByUsageDate(Date usageDate) {
+    public static Criteria filterByExactUsageDate(Date usageDate) {
         return Criteria.where("usageDate").is(usageDate);
     }
 
-
     public static Criteria filterByUsageDateBetween(Date startDate, Date endDate) {
-        return Criteria.where("dateRange").gte(startDate).lte(endDate);
+        return Criteria.where("usageDate").gte(startDate).lte(endDate);
+    }
+
+    public static Criteria filterByUsageDateWithin12Hours(Date usageDate) {
+        Date startDate = new Date(usageDate.getTime() - 12 * 60 * 60 * 1000);
+        Date endDate = new Date(usageDate.getTime() + 12 * 60 * 60 * 1000);
+        return Criteria.where("usageDate").gte(startDate).lte(endDate);
     }
 }

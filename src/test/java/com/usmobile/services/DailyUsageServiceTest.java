@@ -125,7 +125,7 @@ public class DailyUsageServiceTest {
         usage.setUsageDate(usageDate);
         usage.setUsedInMb(100.0);
 
-        when(mongoTemplate.findOne(new Query(DailyUsageCriteria.filterByMdn(mdn).andOperator(DailyUsageCriteria.filterByUsageDate(usageDate))), DailyUsage.class))
+        when(mongoTemplate.findOne(new Query(DailyUsageCriteria.filterByMdn(mdn).andOperator(DailyUsageCriteria.filterByUsageDateWithin12Hours(usageDate))), DailyUsage.class))
             .thenReturn(usage);
             
         DailyUsage updatedUsage = dailyUsageService.updateUsage(mdn, usageDate, usedInMb);

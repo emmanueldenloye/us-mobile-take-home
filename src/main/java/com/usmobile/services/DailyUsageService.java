@@ -90,7 +90,7 @@ public class DailyUsageService {
         Criteria criteria = 
             DailyUsageCriteria
             .filterByMdn(mdn)
-            .andOperator(DailyUsageCriteria.filterByUsageDate(usageDate));
+            .andOperator(DailyUsageCriteria.filterByUsageDateWithin12Hours(usageDate));
         Query query = new Query(criteria);
         DailyUsage usage = mongoTemplate.findOne(query, DailyUsage.class);
 
